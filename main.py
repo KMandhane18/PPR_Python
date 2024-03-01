@@ -21,7 +21,7 @@ if __name__ == '__main__':
                 "Export the Graph"
                 ]
 
-    st.title('Graph Creation')
+    st.title('Graph Analyzer')
     with st.sidebar:
         selected_tab = option_menu("Main Menu", options=tab_list,
 
