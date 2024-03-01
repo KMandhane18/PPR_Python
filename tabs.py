@@ -33,10 +33,6 @@ def delete_person(name, age, type_n):
     person_not_found()
 
 
-def update_person(name, age, type_n):
-    for person_dict in st.session_state[""]
-
-
 def save_relation(person1_select, relation_name, person2_select):
     if person1_select == person2_select:
         st.error("Relation can not be added to itself")
