@@ -1,3 +1,4 @@
+import graphviz
 import streamlit as st
 import networkx as nx
 
@@ -34,7 +35,7 @@ def random_relation(graph, source, target):
         st.error("Please select different people")
     else:
         try:
-            nx.shortest_path(graph, source, target)
+            nx.has_path(graph, source, target)
             st.info(f"Relation between {source} and {target} found in the data")
         except nx.NetworkXNoPath:
             st.info(f"Relation between {source} and {target} not found in the data")
@@ -48,7 +49,7 @@ def density(graph: nx.Graph):
     density_graph = num_edges / (num_nodes * (num_nodes - 1))
     if not graph.is_directed():
         density_graph *= 2
-    st.info(density_graph)
+    st.info(f"The density of the graph is {density_graph}")
 
 
 def graph_directed(graph: nx.Graph):
@@ -72,3 +73,36 @@ def graph_dict_func():
         "edges": st.session_state["edge_list"]
     }
     st.session_state["graph_dict"] = graph_dict
+
+
+def shortest_path(graph: nx.Graph):
+    person_1_col, person_2_col = st.columns(2)
+    with person_1_col:
+        person_1_sel = st.selectbox(
+            "Select Person 1",
+            options=graph.nodes
+        )
+    with person_2_col:
+        person_2_sel = st.selectbox(
+            "Select Person 2",
+            options=graph.nodes
+        )
+    find_path_button = st.button('Find the path', type="primary")
+
+    if find_path_button:
+        if person_1_sel == person_2_sel:
+            st.error("Please select different people")
+        else:
+            try:
+                shortest_path_for_graph = nx.shortest_path(graph, person_1_sel, person_2_sel)
+                st.info(f"The shortest path between {person_1_sel} and {person_2_sel} is {shortest_path_for_graph}")
+                subgraph = graph.subgraph(shortest_path_for_graph)
+                path_graph = graphviz.Digraph()
+                for node in subgraph.nodes:
+                    path_graph.node(str(node))
+                for edge in subgraph.edges:
+                    path_graph.edge(str(edge[0]), str(edge[1]))
+                st.graphviz_chart(path_graph)
+
+            except nx.NetworkXNoPath:
+                st.error(f"No path exist between {person_1_sel} and {person_2_sel}")

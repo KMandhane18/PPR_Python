@@ -6,7 +6,7 @@ import json
 import uuid
 from test import metamodel_dict
 from graph_functions import output_node_and_edges, count_nodes, specific_node, specific_edge, \
-    density, random_relation, graph_directed, graph_emptiness
+    density, random_relation, graph_directed, graph_emptiness, shortest_path
 from streamlit_agraph import agraph, Node, Edge, Config
 
 
@@ -258,7 +258,8 @@ def analyze_graph_func():
                                        "Density of the graph",
                                        "Is Graph Directed?",
                                        "Is Graph Empty?",
-                                       "Find if two person are somehow related"],
+                                       "Find if two person are somehow related",
+                                       "Find the shortest path"],
                                    index=None,
                                    placeholder="What do you want to analyze?"
                                    )
@@ -288,16 +289,19 @@ def analyze_graph_func():
         person_name_list = []
         for person in person_list:
             person_name_list.append(person["name"])
-        find_relation_1 = st.selectbox(
-            "Select Person 1",
-            options=person_name_list,
-            key="person1_select"
-        )
-        find_relation_2 = st.selectbox(
-            "Select Person 2",
-            options=person_name_list,
-            key="person2_select"
-        )
+        relation_1, relation_2 = st.columns(2)
+        with relation_1:
+            find_relation_1 = st.selectbox(
+                "Select Person 1",
+                options=person_name_list,
+                key="person1_select"
+            )
+        with relation_2:
+            find_relation_2 = st.selectbox(
+                "Select Person 2",
+                options=person_name_list,
+                key="person2_select"
+            )
         find_relation_button = st.button("Find Relation", type="primary")
         if find_relation_button:
             specific_edge(graph=G, source=find_relation_1, target=find_relation_2)
@@ -324,19 +328,27 @@ def analyze_graph_func():
         person_name_list = []
         for person in person_list:
             person_name_list.append(person["name"])
-        find_possible_relation_1 = st.selectbox(
-            "Select Person 1",
-            options=person_name_list,
-            key="person1_select"
-        )
-        find_possible_relation_2 = st.selectbox(
-            "Select Person 2",
-            options=person_name_list,
-            key="person2_select"
-        )
+
+        relation_1, relation_2 = st.columns(2)
+        with relation_1:
+            find_possible_relation_1 = st.selectbox(
+                "Select Person 1",
+                options=person_name_list,
+                key="person1_select"
+            )
+        with relation_2:
+            find_possible_relation_2 = st.selectbox(
+                "Select Person 2",
+                options=person_name_list,
+                key="person2_select"
+            )
+
         find_possible_relation_button = st.button("Find Relation", type="primary")
         if find_possible_relation_button:
             random_relation(graph=G, source=find_possible_relation_1, target=find_possible_relation_2)
+
+    elif select_function == "Find the shortest path":
+        shortest_path(graph=G)
 
 
 def export_graph_func():
